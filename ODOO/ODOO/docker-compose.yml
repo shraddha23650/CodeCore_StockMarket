@@ -1,0 +1,155 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: inventory-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: inventory_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - inventory-network
+
+  # Auth Service
+  backend-auth:
+    build:
+      context: .
+      dockerfile: backend-auth/Dockerfile
+    container_name: backend-auth
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Products Service
+  backend-products:
+    build:
+      context: .
+      dockerfile: backend-products/Dockerfile
+    container_name: backend-products
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      PORT: 5001
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Receipt Service
+  backend-receipt:
+    build:
+      context: .
+      dockerfile: backend-receipt/Dockerfile
+    container_name: backend-receipt
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    environment:
+      PORT: 5002
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Deliveries Service
+  backend-deliveries:
+    build:
+      context: .
+      dockerfile: backend-deliveries/Dockerfile
+    container_name: backend-deliveries
+    restart: unless-stopped
+    ports:
+      - "5003:5003"
+    environment:
+      PORT: 5003
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Transfer Service
+  backend-transfer:
+    build:
+      context: .
+      dockerfile: backend-transfer/Dockerfile
+    container_name: backend-transfer
+    restart: unless-stopped
+    ports:
+      - "5004:5004"
+    environment:
+      PORT: 5004
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Adjustment Service
+  backend-adjustment:
+    build:
+      context: .
+      dockerfile: backend-adjustment/Dockerfile
+    container_name: backend-adjustment
+    restart: unless-stopped
+    ports:
+      - "5005:5005"
+    environment:
+      PORT: 5005
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+  # Dashboard Service
+  backend-dashboard:
+    build:
+      context: .
+      dockerfile: backend-dashboard/Dockerfile
+    container_name: backend-dashboard
+    restart: unless-stopped
+    ports:
+      - "5006:5006"
+    environment:
+      PORT: 5006
+      MONGODB_URI: mongodb://mongodb:27017/inventory_db
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      JWT_EXPIRES_IN: 7d
+    depends_on:
+      - mongodb
+    networks:
+      - inventory-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  inventory-network:
+    driver: bridge
+
